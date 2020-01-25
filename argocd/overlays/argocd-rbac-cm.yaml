@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: argocd-rbac-cm
+data:
+  policy.default: 'role:readonly'
+  scopes: '[cognito:groups, email]'
+  policy.csv: |
+    g, nikolas.philips@gmail.com, role:admin
+    g, joachim.prinzbach@gmail.com, role:admin
+
+    p, role:baloise-incubator, applications, sync, baloise-incubator/*, allow
+    g, baloise-incubator:, role:baloise-incubator
+
+

@@ -1,0 +1,31 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: kafka-admin
+  labels:
+    app: {{ template "strimzi.name" . }}
+    chart: {{ template "strimzi.chart" . }}
+    component: role
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+  
+rules:
+  - apiGroups:
+      - kafka.strimzi.io
+    resources:
+      - kafkatopics
+      - kafkabridges
+      - kafkaconnects
+      - kafkaconnects2is
+      - kafkamirrormakers
+      - kafkas
+      - kafkatopics
+      - kafkausers
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
