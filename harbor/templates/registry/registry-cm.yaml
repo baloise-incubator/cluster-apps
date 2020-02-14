@@ -147,6 +147,7 @@ data:
       # secret: placeholder
       debug:
         addr: localhost:5001
+      relativeurls: true
     auth:
       token:
         issuer: harbor-token-issuer
