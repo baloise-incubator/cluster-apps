@@ -442,7 +442,7 @@ service:
 ## the IP address of k8s node. If Harbor is deployed behind the proxy,
 ## set it as the URL of proxy
 ##
-externalURL: https://registry.apps.baloise.dev
+externalURL: https://registry.baloise.dev
 
 ## UAA Authentication Options
 ## If you're using UAA for authentication behind a self-signed
