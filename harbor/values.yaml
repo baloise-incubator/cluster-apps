@@ -1226,6 +1226,11 @@ redis:
     persistence:
       enabled: true
 
+  securityContext:
+    fsGroup: 1000550000
+    runAsUser: 1000550000
+
+
 ## If the Redis included in the chart is disabled, Harbor will use below
 ## Redis parameters to connect to an external Redis server.
 ##
@@ -1259,6 +1264,11 @@ postgresql:
     enabled: true
   persistence:
     enabled: true
+  volumePermissions:
+    enabled: false
+  securityContext:
+    fsGroup: 1000550000
+    runAsUser: 1000550000
   ## PostgreSQL initdb initdbScripts
   ##
   initdbScripts:

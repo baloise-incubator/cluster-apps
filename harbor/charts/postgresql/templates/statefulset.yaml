@@ -402,7 +402,7 @@ spec:
         - name: dshm
           emptyDir:
             medium: Memory
-            sizeLimit: 1Gi
+#            sizeLimit: 1Gi
         {{- end }}
 {{- if and .Values.persistence.enabled .Values.persistence.existingClaim }}
         - name: data

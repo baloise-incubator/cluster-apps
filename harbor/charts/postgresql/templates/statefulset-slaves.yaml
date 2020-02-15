@@ -244,7 +244,7 @@ spec:
         - name: dshm
           emptyDir:
             medium: Memory
-            sizeLimit: 1Gi
+#            sizeLimit: 1Gi
         {{- end }}
         {{- if not .Values.persistence.enabled }}
         - name: data
