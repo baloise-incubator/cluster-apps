@@ -1269,6 +1269,9 @@ postgresql:
   securityContext:
     fsGroup: 1000550000
     runAsUser: 1000550000
+  shmVolume:
+    enabled: false
+
   ## PostgreSQL initdb initdbScripts
   ##
   initdbScripts:
