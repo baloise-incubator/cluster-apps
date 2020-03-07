@@ -154,3 +154,4 @@ settings:
   singleNamespace: false
   watchNamespaces:
     - default
+    - gloo
