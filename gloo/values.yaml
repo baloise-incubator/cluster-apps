@@ -1,136 +1,154 @@
-namespace:
-  create: false
-k8s:
-  clusterName: cluster.local
-# We need this for backwards-compatibility with Helm 2
+accessLogger:
+  enabled: false
+  image:
+    repository: access-logger
+    tag: 1.3.12
+  port: 8083
+  replicas: 1
+  serviceName: AccessLog
 crds:
   create: true
-settings:
-  # if this is set to false, default settings will be created by pods upon boot
-  create: true
-  linkerd: false
-  invalidConfigPolicy:
-    replaceInvalidRoutes: false
-    invalidRouteResponseCode: 404
-    invalidRouteResponseBody: 'Gloo Gateway has invalid configuration. Administrators should run `glooctl check` to find and fix config errors.'
-  integrations:
-    knative:
-      enabled: false
-      version: "0.10.0"
-      proxy:
-        image:
-          repository: gloo-envoy-wrapper
-        httpPort: 80
-        httpsPort: 443
-        replicas: 1
-  # Namespaces that Gloo should watch. This includes watches set for pods, services, as well as CRD configuration objects.
-  watchNamespaces: []
-  # Gloo allows you to directly reference a Kubernetes service as a routing destination. To enable this feature,
-  # Gloo scans the cluster for Kubernetes services and creates a special type of in-memory Upstream to represent them.
-  # If the cluster contains a lot of services and you do not restrict the namespaces Gloo is watching, this can result
-  # in significant overhead. If you do not plan on using this feature, you can set this flag to true to turn it off.
-  disableKubernetesDestinations: false
-  # Set this option to determine the state of an Envoy listener when the corresponding Gloo Proxy resource has no routes.
-  # If false (default), Gloo will propagate the state of the Proxy to Envoy, resetting the listener to a clean slate with no routes.
-  # If true, Gloo will keep serving the routes from the last applied valid configuration.
-  disableProxyGarbageCollection: false
-gloo:
-  deployment:
-    image:
-      repository: gloo
-    xdsPort: 9977
-    validationPort: 9988
-    replicas: 1
-    runAsUser: 10101
 discovery:
-  enabled: true
-  fdsMode: WHITELIST
   deployment:
+    floatingUserId: false
     image:
       repository: discovery
+      tag: 1.3.12
     replicas: 1
     runAsUser: 10101
-gateway:
   enabled: true
-  readGatewaysFromAllNamespaces: false
-  validation:
-    enabled: true
-    failurePolicy: "Ignore"
-    secretName: gateway-validation-certs
-    alwaysAcceptResources: true
-  deployment:
-    image:
-      repository: gateway
-    replicas: 1
-    runAsUser: 10101
+  fdsMode: WHITELIST
+gateway:
   certGenJob:
     enabled: true
     image:
       repository: certgen
+      tag: 1.3.12
     restartPolicy: OnFailure
     setTtlAfterFinished: true
     ttlSecondsAfterFinished: 60
-  proxyServiceAccount: {}
+  deployment:
+    floatingUserId: false
+    image:
+      repository: gateway
+      tag: 1.3.12
+    replicas: 1
+    runAsUser: 10101
+  enabled: true
+  proxyServiceAccount:
+    disableAutomount: false
+  readGatewaysFromAllNamespaces: false
+  updateValues: false
+  validation:
+    alwaysAcceptResources: true
+    enabled: true
+    failurePolicy: Ignore
+    secretName: gateway-validation-certs
 gatewayProxies:
   gatewayProxy:
-    gatewaySettings: {}
+    antiAffinity: false
+    configMap:
+      data: null
+    extraInitContainersHelper: ""
+    extraListenersHelper: ""
+    extraVolumeHelper: ""
+    gatewaySettings:
+      disableGeneratedGateways: false
+      options: {}
+      useProxyProto: false
     kind:
       deployment:
         replicas: 1
     podTemplate:
-      probes: false
-      image:
-        repository: gloo-envoy-wrapper
+      disableNetBind: false
+      floatingUserId: false
       httpPort: 8080
       httpsPort: 8443
+      image:
+        repository: gloo-envoy-wrapper
+        tag: 1.3.12
+      probes: false
       runAsUser: 10101
+      runUnprivileged: false
+      tolerations: null
+    readConfig: false
     service:
-      type: LoadBalancer
-      # clusterIP: None
       httpPort: 80
       httpsPort: 443
-    # Annotation example: setup ssl with aws cert when service.type is LoadBalancer
-    # extraAnnotations:
-    #   service.beta.kubernetes.io/aws-load-balancer-ssl-cert: arn:aws:acm:us-east-1:EXAMPLE_CERT
-    tracing:
-    configMap:
-      data:
-accessLogger:
-  enabled: false
-  port: 8083
-  serviceName: AccessLog
-  image:
-    repository: access-logger
-  replicas: 1
-ingress:
-  enabled: false
-  deployment:
-    image:
-      repository: ingress
-    replicas: 1
-ingressProxy:
-  deployment:
-    image:
-      repository: gloo-envoy-wrapper
-    httpPort: 80
-    httpsPort: 443
-    replicas: 1
-  configMap:
-    data:
-  tracing:
+      type: LoadBalancer
 global:
-  image:
-    registry: quay.io/solo-io
-    pullPolicy: IfNotPresent
-  glooRbac:
-    create: true
-  glooStats:
-    enabled: true
   glooMtls:
     enabled: false
-    sds:
-      image:
-        repository: sds
     envoy:
       image:
         repository: gloo-envoy-wrapper
+        tag: 1.3.12
+    sds:
+      image:
+        repository: sds
+        tag: 1.3.12
+  glooRbac:
+    create: true
+    nameSuffix: ""
+    namespaced: false
+  glooStats:
+    enabled: true
+  image:
+    pullPolicy: IfNotPresent
+    registry: quay.io/solo-io
+  wasm:
+    enabled: false
+gloo:
+  deployment:
+    disableUsageStatistics: false
+    floatingUserId: false
+    image:
+      repository: gloo
+      tag: 1.3.12
+    replicas: 1
+    runAsUser: 10101
+    validationPort: 9988
+    xdsPort: 9977
+ingress:
+  deployment:
+    image:
+      repository: ingress
+      tag: 1.3.12
+    replicas: 1
+  enabled: false
+  requireIngressClass: null
+ingressProxy:
+  configMap: {}
+  deployment:
+    httpPort: 80
+    httpsPort: 443
+    image:
+      repository: gloo-envoy-wrapper
+      tag: 1.3.12
+    replicas: 1
+k8s:
+  clusterName: cluster.local
+namespace:
+  create: false
+settings:
+  create: true
+  disableKubernetesDestinations: false
+  disableProxyGarbageCollection: false
+  integrations:
+    knative:
+      enabled: false
+      proxy:
+        httpPort: 80
+        httpsPort: 443
+        image:
+          repository: gloo-envoy-wrapper
+          tag: 1.3.12
+        replicas: 1
+      requireIngressClass: null
+      version: 0.10.0
+  invalidConfigPolicy:
+    invalidRouteResponseBody: Gloo Gateway has invalid configuration. Administrators
+      should run `glooctl check` to find and fix config errors.
+    invalidRouteResponseCode: 404
+  linkerd: false
+  singleNamespace: false
