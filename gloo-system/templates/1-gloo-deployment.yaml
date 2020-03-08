@@ -58,6 +58,12 @@ spec:
         - containerPort: {{ .Values.gloo.deployment.xdsPort }}
           name: grpc-xds
           protocol: TCP
+        readinessProbe:
+          tcpSocket:
+            port: {{ .Values.gloo.deployment.xdsPort }}
+          initialDelaySeconds: 1
+          periodSeconds: 2
+          failureThreshold: 10
         volumeMounts:
         - mountPath: /etc/envoy
           name: envoy-sidecar-config
@@ -133,6 +139,14 @@ spec:
           - name: WASM_ENABLED
             value: "true"
         {{- end }}
+{{- if not .Values.global.glooMtls.enabled }}
+        readinessProbe:
+          tcpSocket:
+            port: {{ .Values.gloo.deployment.xdsPort }}
+          initialDelaySeconds: 1
+          periodSeconds: 2
+          failureThreshold: 10
+{{- end }}
       {{- if $image.pullSecret }}
       imagePullSecrets:
         - name: {{ $image.pullSecret }}
