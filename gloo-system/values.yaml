@@ -78,7 +78,7 @@ gatewayProxies:
       type: LoadBalancer
 global:
   glooMtls:
-    enabled: false
+    enabled: true
     envoy:
       image:
         repository: gloo-envoy-wrapper
