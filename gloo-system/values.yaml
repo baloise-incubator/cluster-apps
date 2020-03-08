@@ -100,7 +100,7 @@ global:
     enabled: false
 gloo:
   deployment:
-    disableUsageStatistics: false
+    disableUsageStatistics: true
     floatingUserId: false
     image:
       repository: gloo
